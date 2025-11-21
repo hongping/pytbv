@@ -9,4 +9,6 @@ async def test_simple(dut):
     await Timer(10, unit="ns")
     dut._log.info("end")
 
-run("test_cocotb_only")
+
+if __name__ == "__main__":
+    run("test_cocotb_only")

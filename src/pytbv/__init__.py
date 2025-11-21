@@ -29,7 +29,7 @@ from .stub.kernel import Kernel
 def run(cocotb_test_module):
     os.environ["COCOTB_TEST_MODULES"] = cocotb_test_module
 
-    kernal = Kernel.init()
+    kernel = Kernel.init()
 
     """
     called in pygpi entry to start cocotb
@@ -40,4 +40,4 @@ def run(cocotb_test_module):
     cocotb._init.run_regression([])
 
     
-    kernal.run()
+    kernel.run()
