@@ -57,6 +57,8 @@ class CbTransaction(object):
 class CSVKernel(Kernel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.version = "0.0.1"
+        self.product = "CSV Kernel"
         self.transaction_listeners = collections.defaultdict(list)
         self.csv_events = []
         
@@ -134,16 +136,13 @@ class CSVKernel(Kernel):
             while self.csv_events and self.csv_events[0].time == self.simulation_time:
                 txn = self.csv_events.pop(0)
                 if txn.port in self.transaction_listeners:
+                    # Swap out listeners list to handle re-registration during callbacks
                     listeners = self.transaction_listeners[txn.port]
-                    # Iterate over a copy in case listeners modify the list
-                    for listener in listeners[:]:
-                        # listener.ud is the Transaction Trigger object
-                        # We can attach the transaction data to it
+                    self.transaction_listeners[txn.port] = []
+                    
+                    for listener in listeners:
                         listener.ud.transaction = txn
                         listener()
-                    
-                    # Clear listeners after firing (One-Shot behavior)
-                    self.transaction_listeners[txn.port].clear()
 
             # Process Timer events at this time
             while self.scheduled_callbacks and self.scheduled_callbacks[0].time_off == self.simulation_time:
