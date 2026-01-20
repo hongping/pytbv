@@ -24,6 +24,7 @@ from cocotb.triggers import Timer
 
 import pyuvm
 from pyuvm import *
+import pytest
 
 class Transaction(uvm_sequence_item):
     def __init__(self, name="transaction"):
@@ -92,5 +93,15 @@ class hello_world(uvm_test):
         self.drop_objection()
 
 
+# Pytest wrapper to run via pytest
+@pytest.mark.integration
+def test_basic_pyuvm_via_pytest():
+    """Run pyuvm test via pytest."""
+    from pytbv.kernel import Kernel
+    Kernel._inst = None  # Reset singleton
+    result = run("tests.integration.test_basic_pyuvm")
+    assert result.all_passed, f"pyuvm test failed: {result}"
+
+
 if __name__ == "__main__":
-    run("test_basic_pyuvm")
+    run("tests.integration.test_basic_pyuvm")

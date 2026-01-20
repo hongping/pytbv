@@ -40,13 +40,27 @@ async def test_csv_driver(dut):
         except Exception as e:
             dut._log.info(f"Transaction {i+1} failed or simulation ended: {e}")
 
+
+# Pytest wrapper to run via pytest
+import pytest
+@pytest.mark.integration
+def test_csv_driver_via_pytest():
+    """Run CSV driver test via pytest."""
+    from pytbv import run
+    from pytbv.kernel import Kernel
+    from pytbv.kernels import CSVKernel
+    Kernel._inst = None  # Reset singleton
+    result = run("tests.integration.test_csv_driver", kernel_cls=CSVKernel, csv_path="tests/data/transactions.csv")
+    assert result.all_passed, f"CSV driver test failed: {result}"
+
+
 if __name__ == "__main__":
     import argparse
     from pytbv import run
     from pytbv.kernels import CSVKernel, Transaction
 
     parser = argparse.ArgumentParser(description="Run CSV driver test")
-    parser.add_argument("--csv", default="tests/transactions.csv", help="Path to transaction CSV file")
+    parser.add_argument("--csv", default="tests/data/transactions.csv", help="Path to transaction CSV file")
     args = parser.parse_args()
 
-    run("tests.test_csv_driver", kernel_cls=CSVKernel, csv_path=args.csv)
+    run("tests.integration.test_csv_driver", kernel_cls=CSVKernel, csv_path=args.csv)

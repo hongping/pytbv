@@ -14,3 +14,16 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = false
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov", "pytest-mock"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+markers = [
+    "unit: Unit tests (fast, no external deps)",
+    "integration: Integration tests (requires cocotb/pyuvm)"
+]

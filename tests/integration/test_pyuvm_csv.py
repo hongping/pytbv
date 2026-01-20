@@ -88,7 +88,7 @@ class Env(uvm_env):
         self.producer.put_port.connect(self.consumer.put_export)
 
 @pyuvm.test()
-class TestPyuvmCsv(uvm_test):
+class PyuvmCsvTest(uvm_test):
     def build_phase(self):
         self.env = Env("env", self)
     
@@ -98,10 +98,21 @@ class TestPyuvmCsv(uvm_test):
         self.drop_objection()
 
 
+# Pytest wrapper to run via pytest
+import pytest
+@pytest.mark.integration
+def test_pyuvm_csv_via_pytest():
+    """Run pyuvm CSV test via pytest."""
+    from pytbv.kernel import Kernel
+    Kernel._inst = None  # Reset singleton
+    result = run("tests.integration.test_pyuvm_csv", kernel_cls=CSVKernel, csv_path="tests/data/transactions.csv")
+    assert result.all_passed, f"pyuvm CSV test failed: {result}"
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--csv", default="tests/transactions.csv")
+    parser.add_argument("--csv", default="tests/data/transactions.csv")
     args = parser.parse_args()
     
-    run("tests.test_pyuvm_csv", kernel_cls=CSVKernel, csv_path=args.csv)
+    run("tests.integration.test_pyuvm_csv", kernel_cls=CSVKernel, csv_path=args.csv)

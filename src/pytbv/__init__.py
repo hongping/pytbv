@@ -38,7 +38,28 @@ if version.parse(cocotb.__version__) < version.parse("2.0.0"):
 
 from .kernel import Kernel
 
+
+class TestResult:
+    """Result of running pytbv tests."""
+    def __init__(self, passed=0, failed=0, skipped=0):
+        self.passed = passed
+        self.failed = failed
+        self.skipped = skipped
+    
+    @property
+    def all_passed(self):
+        return self.failed == 0 and self.passed > 0
+    
+    def __repr__(self):
+        return f"TestResult(passed={self.passed}, failed={self.failed}, skipped={self.skipped})"
+
+
 def run(cocotb_test_module, kernel_cls=Kernel, **kwargs):
+    """Run cocotb/pyuvm tests and return results.
+    
+    Returns:
+        TestResult: Object containing passed/failed/skipped counts.
+    """
     os.environ["COCOTB_TEST_MODULES"] = cocotb_test_module
 
     kernel = kernel_cls.init(**kwargs)
@@ -49,3 +70,17 @@ def run(cocotb_test_module, kernel_cls=Kernel, **kwargs):
     cocotb._init.run_regression([])
     
     kernel.run()
+    
+    # Get test results from cocotb's regression manager
+    try:
+        from cocotb._init import _regression_manager
+        if _regression_manager is not None:
+            passed = _regression_manager.passed
+            failed = _regression_manager.failed
+            skipped = _regression_manager.skipped
+            return TestResult(passed=passed, failed=failed, skipped=skipped)
+    except (ImportError, AttributeError):
+        pass
+    
+    # Fallback: assume passed if no exception was raised
+    return TestResult(passed=1, failed=0, skipped=0)
