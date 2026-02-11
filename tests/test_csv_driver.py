@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 import cocotb
-from pytbv.kernels import Transaction
+from pytbv.transaction import Transaction
 
 @cocotb.test()
 async def test_csv_driver(dut):
@@ -43,7 +43,8 @@ async def test_csv_driver(dut):
 if __name__ == "__main__":
     import argparse
     from pytbv import run
-    from pytbv.kernels import CSVKernel, Transaction
+    from pytbv.kernels import CSVKernel
+    from pytbv.transaction import Transaction
 
     parser = argparse.ArgumentParser(description="Run CSV driver test")
     parser.add_argument("--csv", default="tests/transactions.csv", help="Path to transaction CSV file")
