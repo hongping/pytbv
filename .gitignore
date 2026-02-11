@@ -2,3 +2,4 @@
 .venv/
 src/pytbv.egg-info/
 results.xml
+.coverage
