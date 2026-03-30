@@ -19,7 +19,8 @@
 # SOFTWARE.
 
 from pytbv import run
-from pytbv.kernels import CSVKernel, Transaction as CsvTrigger
+from pytbv.kernels import CSVKernel
+from pytbv.transaction import Transaction as CsvTrigger
 from cocotb.triggers import Timer
 import pyuvm
 from pyuvm import *

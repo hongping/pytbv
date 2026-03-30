@@ -18,4 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .csv import CSVKernel, Transaction
+def __getattr__(name):
+    if name == "CSVKernel":
+        from .csv import CSVKernel
+        return CSVKernel
+    elif name == "WaveKernel":
+        from .wave import WaveKernel
+        return WaveKernel
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
